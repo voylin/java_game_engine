@@ -1,9 +1,14 @@
 #include <iostream>
-#include "mke.hpp"
+#include "mke_core.hpp"
 
-using namespace std;
+
+
+const String GAME_NAME = "Meikyuu Kazan";
+const Version GAME_VERSION = Version{0,1,0};
+
 
 int main(){
-  cout << "Hello ... hello? Anybody there?" << endl;
+  std::cout << "Hello ... hello? Anybody there?" << std::endl;
+  mke::startEngine(&GAME_NAME, &GAME_VERSION);
   return 0;
 }

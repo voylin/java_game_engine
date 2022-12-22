@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${workspaceFolder}/meikyuu_engine",
                 "${workspaceFolder}/meikyuu_engine"
             ],
             "defines": [],
