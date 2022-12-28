@@ -1,3 +1,3 @@
 # Meikyuu Kazan
 
-A game made with my own engine 'Meikyuu Engine'.
+This project is switching from c++ to java.
