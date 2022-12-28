@@ -1,3 +1,3 @@
 # Meikyuu Kazan
 
-This project is switching from c++ to java.
+A game made with lwjgl and Java.

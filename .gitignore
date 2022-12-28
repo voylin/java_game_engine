@@ -1,2 +1,19 @@
 # Linux stuff
 .directory
+
+# IntelliJ IDEA files and directories
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Generated files and directories
+out/
+build/
+
+# OS-specific files and directories
+.DS_Store
+Thumbs.db
+
+# Java
+*.log
