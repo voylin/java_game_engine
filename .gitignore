@@ -6,6 +6,7 @@
 *.iml
 *.ipr
 *.iws
+.gradle/
 
 # Generated files and directories
 out/
