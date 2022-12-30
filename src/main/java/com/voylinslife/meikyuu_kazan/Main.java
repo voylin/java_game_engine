@@ -1,8 +1,8 @@
-package com.voylinslife;
+package com.voylinslife.meikyuu_kazan;
 
-import com.voylinslife.mke.types.Version;
+import mke.types.Version;
 
-import static com.voylinslife.mke.Core.runEngine;
+import static mke.Core.runEngine;
 
 
 public class Main {

@@ -1,4 +1,4 @@
-package com.voylinslife.mke.types;
+package mke.types;
 
 public class Version {
   public int major, minor, patch;
