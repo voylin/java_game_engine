@@ -1,6 +1,5 @@
 package mke.shaders;
 
-import org.lwjgl.system.linux.Stat;
 
 public class StaticShader extends ShaderProgram {
   private static final String VERTEX_FILE = "shaders/static_shader.vert";
@@ -14,5 +13,6 @@ public class StaticShader extends ShaderProgram {
   @Override
   protected void bindAttributes() {
     super.bindAttribute(0, "position");
+    super.bindAttribute(1, "tex_coords");
   }
 }

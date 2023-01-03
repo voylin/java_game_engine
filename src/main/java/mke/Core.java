@@ -3,14 +3,13 @@ package mke;
 import mke.shaders.StaticShader;
 import mke.types.Model;
 import mke.types.Version;
-import mke.utils.Logger;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
-import java.net.URL;
+import java.util.Objects;
 
-import static mke.utils.Logger.printDetails;
-import static mke.utils.Logger.printEngine;
+import static mke.ModelLoader.loadToVAO;
+import static mke.utils.Logger.*;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -42,7 +41,7 @@ public class Core {
     printEngine("Creating window ...");
     GLFWErrorCallback.createPrint(System.err).set();
     if ( !glfwInit() )
-      throw new IllegalStateException(Logger.printError("Unable to initialize GLFW!"));
+      throw new IllegalStateException(printError("Unable to initialize GLFW!"));
 
     glfwDefaultWindowHints();
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
@@ -56,7 +55,7 @@ public class Core {
         GAME_NAME + " - " + GAME_VERSION.toString(),
         NULL, NULL);
     if (window_id == NULL)
-      throw new RuntimeException(Logger.printError("Failed to create GLFW window!"));
+      throw new RuntimeException(printError("Failed to create GLFW window!"));
 
     glfwMakeContextCurrent(window_id);
     glfwSwapInterval(1); // V-sync
@@ -77,11 +76,9 @@ public class Core {
         0.5f, -0.5f, 0f,
         0.5f, 0.5f, 0f
     };
-    int[] indices = {
-        0,1,3,
-        3,1,2
-    };
-    Model model = ModelLoader.loadToVAO(vertices, indices);
+    int[] indices = { 0,1,3,3,1,2 };
+    float[] tex_coords = { 0,0,0,1,1,1,1,0 };
+    Model model = loadToVAO(vertices, indices, tex_coords, "wall.jpg");
     /* TEMPORARY END */
 
 
@@ -110,7 +107,7 @@ public class Core {
     glfwFreeCallbacks(window_id);
     glfwDestroyWindow(window_id);
     glfwTerminate();
-    glfwSetErrorCallback(null).free();
+    Objects.requireNonNull(glfwSetErrorCallback(null)).free();
     printEngine("Closing complete!");
   }
 
