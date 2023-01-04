@@ -1,8 +1,11 @@
 package mke;
 
+import mke.nodes.Camera;
+import mke.nodes.Object;
 import mke.shaders.StaticShader;
-import mke.types.Model;
 import mke.types.Version;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
@@ -12,6 +15,7 @@ import static mke.ModelLoader.loadToVAO;
 import static mke.utils.Logger.*;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -68,17 +72,83 @@ public class Core {
     glfwSetFramebufferSizeCallback(window_id, Core::frameBufferSizeCallback);
     glfwSetWindowCloseCallback(window_id, Core::windowCloseCallback);
 
+    Camera.setCurrentCamera(new Camera());
 
     /* TEMPORARY START */
     float[] vertices = {
-        -0.5f, 0.5f, 0f,
-        -0.5f, -0.5f, 0f,
-        0.5f, -0.5f, 0f,
-        0.5f, 0.5f, 0f
+        -0.5f,0.5f,-0.5f,
+        -0.5f,-0.5f,-0.5f,
+        0.5f,-0.5f,-0.5f,
+        0.5f,0.5f,-0.5f,
+
+        -0.5f,0.5f,0.5f,
+        -0.5f,-0.5f,0.5f,
+        0.5f,-0.5f,0.5f,
+        0.5f,0.5f,0.5f,
+
+        0.5f,0.5f,-0.5f,
+        0.5f,-0.5f,-0.5f,
+        0.5f,-0.5f,0.5f,
+        0.5f,0.5f,0.5f,
+
+        -0.5f,0.5f,-0.5f,
+        -0.5f,-0.5f,-0.5f,
+        -0.5f,-0.5f,0.5f,
+        -0.5f,0.5f,0.5f,
+
+        -0.5f,0.5f,0.5f,
+        -0.5f,0.5f,-0.5f,
+        0.5f,0.5f,-0.5f,
+        0.5f,0.5f,0.5f,
+
+        -0.5f,-0.5f,0.5f,
+        -0.5f,-0.5f,-0.5f,
+        0.5f,-0.5f,-0.5f,
+        0.5f,-0.5f,0.5f
     };
-    int[] indices = { 0,1,3,3,1,2 };
-    float[] tex_coords = { 0,0,0,1,1,1,1,0 };
-    Model model = loadToVAO(vertices, indices, tex_coords, "wall.jpg");
+    int[] indices = { 0,1,3,
+        3,1,2,
+        4,5,7,
+        7,5,6,
+        8,9,11,
+        11,9,10,
+        12,13,15,
+        15,13,14,
+        16,17,19,
+        19,17,18,
+        20,21,23,
+        23,21,22
+    };
+    float[] tex_coords = {
+        0,0,
+        0,1,
+        1,1,
+        1,0,
+        0,0,
+        0,1,
+        1,1,
+        1,0,
+        0,0,
+        0,1,
+        1,1,
+        1,0,
+        0,0,
+        0,1,
+        1,1,
+        1,0,
+        0,0,
+        0,1,
+        1,1,
+        1,0,
+        0,0,
+        0,1,
+        1,1,
+        1,0 };
+    Object object = new Object(
+        loadToVAO(vertices, indices, tex_coords, "wall.jpg"),
+        new Vector3f(0,-0.5f,-0.22f),
+        new Vector3f(0,0,0),
+        1);
     /* TEMPORARY END */
 
 
@@ -88,10 +158,13 @@ public class Core {
       Renderer.prepare();
 
       // Game logic
+      Camera.getCurrentCamera().move();
+      object.increaseRotation(0,0.02f,0.02f);
 
       // Render
       static_shader.start();
-      Renderer.render(model);
+      static_shader.loadViewMatrix();
+      Renderer.render(object);
       static_shader.stop();
 
       // Update display
@@ -118,21 +191,22 @@ public class Core {
     glViewport(0, 0, window_width, window_height);
 
     // Creating a new projection matrix
-    // float aspectRatio = (float) window_width / (float) height;
-    // float y_scale = (float)(1f / Math.tan(Math.toRadians(Renderer.FOV/2f))) * aspectRatio;
-    // float x_scale = y_scale / aspectRatio;
-    // float frustum_length = Renderer.FAR_PLANE - Renderer.NEAR_PLANE;
+    float aspectRatio = (float) window_width / (float) window_height;
+    float y_scale = (float)(1f / Math.tan(Math.toRadians(Renderer.FOV/2f))) * aspectRatio;
+    float x_scale = y_scale / aspectRatio;
+    float frustum_length = Renderer.FAR_PLANE - Renderer.NEAR_PLANE;
 
-    // Renderer.projectionMatrix = new Matrix4f();
-    // Renderer.projectionMatrix.m00(x_scale);
-    // Renderer.projectionMatrix.m11(y_scale);
-    // Renderer.projectionMatrix.m22(-((Renderer.FAR_PLANE + Renderer.NEAR_PLANE) / frustum_length));
-    // Renderer.projectionMatrix.m23(-1f);
-    // Renderer.projectionMatrix.m32(-((2 * Renderer.NEAR_PLANE * Renderer.FAR_PLANE) / frustum_length));
-    // Renderer.projectionMatrix.m33(0);
-    // staticShader.start();
-    // staticShader.loadProjectionMatrix(Renderer.projectionMatrix);
-    // staticShader.stop();
+    Renderer.projectionMatrix = new Matrix4f();
+    Renderer.projectionMatrix.m00(x_scale);
+    Renderer.projectionMatrix.m11(y_scale);
+    Renderer.projectionMatrix.m22(-((Renderer.FAR_PLANE + Renderer.NEAR_PLANE) / frustum_length));
+    Renderer.projectionMatrix.m23(-1f);
+    Renderer.projectionMatrix.m32(-((2 * Renderer.NEAR_PLANE * Renderer.FAR_PLANE) / frustum_length));
+    Renderer.projectionMatrix.m33(0);
+
+    static_shader.start();
+    static_shader.loadProjectionMatrix(Renderer.projectionMatrix);
+    static_shader.stop();
   }
 
 

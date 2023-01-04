@@ -34,10 +34,10 @@ public class ModelLoader {
 
     // Position
     storeDataInAttributeList(0, 3, pos);
+    storeDataInAttributeList(1, 2, tex_coords);
 
     // Texture
     int texture = loadTexture(tex_file);
-    storeDataInAttributeList(1, 2, tex_coords);
 
     unbindVAO();
     
@@ -49,16 +49,14 @@ public class ModelLoader {
     textures.add(texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    // Wrapping:
+    // Wrapping + Filtering:
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    // Filtering:
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // Load image and create texture:
-    int[] width = new int[1], height = new int[1],nr_channels = new int[1];
+    int[] width = new int[1], height = new int[1], nr_channels = new int[1];
     stbi_set_flip_vertically_on_load(true);
 
     String file_path = Objects.requireNonNull(ModelLoader.class.getClassLoader().getResource("textures/" + file)).getPath();
@@ -66,7 +64,8 @@ public class ModelLoader {
 
     if (data == null)
       throw new IllegalStateException(printError("Failed to load texture '" + file + "'"));
-    if(file.contains(".png") || file.contains(".PNG"))
+
+    if (file.contains(".png") || file.contains(".PNG"))
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width[0], height[0], 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     else
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width[0], height[0], 0, GL_RGB, GL_UNSIGNED_BYTE, data);
