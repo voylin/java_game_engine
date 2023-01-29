@@ -1,5 +1,7 @@
 package mke;
 
+https://www.youtube.com/watch?v=KMWUjNE0fYI&t=6s
+
 import mke.nodes.Camera;
 import mke.nodes.Object;
 import mke.shaders.StaticShader;
